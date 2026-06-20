@@ -2,145 +2,256 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
+    font-family:'Segoe UI',sans-serif;
 }
 
 body{
-    background:#f8fafc;
-    color:#1e293b;
+    background:#f4f8fb;
+    min-height:100vh;
+    padding:30px;
 }
 
+/* MAIN LAYOUT */
+
+.page-layout{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    gap:30px;
+}
+
+/* SIDE IMAGES */
+
+.side-images{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.side-images img{
+    width:90px;
+    height:90px;
+    object-fit:contain;
+    background:white;
+    padding:10px;
+    border-radius:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    transition:0.3s;
+}
+
+.side-images img:hover{
+    transform:translateY(-5px);
+}
+
+/* MAIN CONTAINER */
+
 .container{
-    max-width:420px;
-    margin:auto;
-    padding:20px;
-    padding-bottom:90px;
+    width:900px;
+    background:white;
+    border-radius:25px;
+    padding:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+
+header{
+    margin-bottom:25px;
 }
 
 header h2{
-    font-size:28px;
-    margin-bottom:5px;
+    font-size:34px;
+    color:#1e293b;
 }
 
 header p{
     color:#64748b;
-    margin-bottom:20px;
+    margin-top:5px;
+}
+
+/* SEARCH BAR */
+
+.search-box{
+    margin-bottom:25px;
 }
 
 .search-box input{
     width:100%;
-    padding:14px;
+    padding:16px;
     border:none;
-    border-radius:12px;
-    background:white;
-    box-shadow:0 2px 8px rgba(0,0,0,0.05);
-    margin-bottom:20px;
+    border-radius:15px;
+    background:#f1f5f9;
+    font-size:15px;
+    outline:none;
 }
+
+/* CARDS */
 
 .card{
     background:white;
-    border-radius:16px;
-    padding:18px;
-    margin-bottom:18px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.05);
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.06);
 }
 
-.health-score .score{
-    font-size:30px;
+/* HEALTH SCORE */
+
+.health-score{
+    background:#eefaf0;
+}
+
+.score{
+    font-size:48px;
     font-weight:bold;
-    color:#0f766e;
-    margin:12px 0;
+    color:#16a34a;
+    margin-top:10px;
 }
 
 .progress{
     width:100%;
-    height:10px;
-    background:#e2e8f0;
-    border-radius:10px;
+    height:12px;
+    background:#d9eadb;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:15px;
 }
 
 .progress-fill{
     width:86%;
     height:100%;
     background:#22c55e;
-    border-radius:10px;
+}
+
+/* APPOINTMENT */
+
+.appointment{
+    background:#f8fafc;
 }
 
 .appointment p{
-    font-size:18px;
     margin-top:10px;
+    font-size:18px;
+    font-weight:600;
 }
 
 .appointment span{
     color:#64748b;
+    font-size:14px;
 }
 
+/* SECTION TITLES */
+
 .section-title{
-    margin:18px 0 12px;
+    margin:25px 0 15px;
+    color:#1e293b;
 }
+
+/* QUICK ACTIONS */
 
 .actions{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
 }
 
 .actions button{
-    padding:14px;
+    padding:18px;
     border:none;
-    border-radius:12px;
-    background:#0f766e;
-    color:white;
+    border-radius:15px;
+    background:#f1f5f9;
+    font-weight:600;
     cursor:pointer;
-    font-size:15px;
+    transition:0.3s;
 }
 
 .actions button:hover{
-    opacity:0.9;
+    background:#dbeafe;
+    transform:translateY(-3px);
 }
+
+/* STATS */
 
 .stats-grid{
     display:grid;
     grid-template-columns:repeat(2,1fr);
-    gap:12px;
+    gap:15px;
+    margin-top:10px;
 }
 
 .stat-card{
-    background:white;
-    padding:18px;
-    border-radius:16px;
-    text-align:center;
-    box-shadow:0 4px 12px rgba(0,0,0,0.05);
+    background:#ffffff;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.05);
 }
 
 .stat-card h4{
+    color:#334155;
     margin-bottom:10px;
-    font-size:15px;
 }
 
 .stat-card p{
-    font-size:20px;
-    font-weight:bold;
-    color:#0f766e;
+    font-size:22px;
+    font-weight:700;
+    color:#0f172a;
 }
+
+/* BOTTOM NAVIGATION */
 
 .bottom-nav{
     position:fixed;
     bottom:0;
+    left:0;
     width:100%;
     background:white;
     display:flex;
-    justify-content:space-around;
-    padding:14px 0;
-    box-shadow:0 -2px 12px rgba(0,0,0,0.08);
+    justify-content:center;
+    gap:50px;
+    padding:18px;
+    box-shadow:0 -2px 15px rgba(0,0,0,0.08);
 }
 
 .bottom-nav a{
     text-decoration:none;
-    color:#475569;
-    font-size:14px;
+    color:#334155;
+    font-weight:600;
+    transition:0.3s;
 }
 
 .bottom-nav a:hover{
-    color:#0f766e;
+    color:#2563eb;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1200px){
+
+    .side-images{
+        display:none;
+    }
+
+    .container{
+        width:95%;
+    }
+}
+
+@media(max-width:768px){
+
+    .actions{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .stats-grid{
+        grid-template-columns:1fr;
+    }
+
+    .bottom-nav{
+        gap:15px;
+        font-size:14px;
+    }
+
+    header h2{
+        font-size:28px;
+    }
 }
