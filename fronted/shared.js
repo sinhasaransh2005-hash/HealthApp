@@ -1,5 +1,4 @@
-// Shared JavaScript Helper for HealthTrack Pages
-const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:8080' : '';
+const API_BASE = window.location.port === '8085' ? '' : 'http://localhost:8085';
 
 const DEFAULT_DASHBOARD = {
     healthScore: 86,
@@ -259,3 +258,321 @@ function initNavbar(activeTarget) {
         <a href="profile.html" class="nav-link ${activeTarget === 'profile' ? 'active' : ''}"><i class="fa-solid fa-circle-user"></i> <span>Profile</span></a>
     `;
 }
+
+// Global Chatbot Injection & Logic
+function initGlobalChatbot() {
+    // Inject chatbot elements
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `
+        <button class="chatbot-toggle-btn" id="chatbot-toggle-btn" title="Ask Aria (AI)">
+            <i class="fa-solid fa-robot"></i>
+            <span class="chatbot-badge" id="chatbot-badge" style="display: none;"></span>
+        </button>
+
+        <div class="chatbot-container" id="chatbot-container">
+            <div class="chatbot-header">
+                <div class="chatbot-header-info">
+                    <div class="chatbot-avatar">A</div>
+                    <div class="chatbot-details">
+                        <h4>Aria</h4>
+                        <div class="chatbot-status">
+                            <span class="chatbot-status-dot"></span>
+                            <span>AI Assistant • Online</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chatbot-header-actions" style="display: flex; gap: 10px; align-items: center;">
+                    <button class="chatbot-settings-btn" id="chatbot-settings-btn" title="AI Settings" style="background:none; border:none; color:white; cursor:pointer; opacity:0.8; font-size:14px; transition: 0.2s;"><i class="fa-solid fa-cog"></i></button>
+                    <button class="chatbot-close-btn" id="chatbot-close-btn" style="background:none; border:none; color:white; cursor:pointer; opacity:0.8; font-size:20px; transition: 0.2s;">&times;</button>
+                </div>
+            </div>
+
+            <div class="chatbot-settings-panel" id="chatbot-settings-panel" style="display: none; padding: 12px; background: #f1f5f9; border-bottom: 1px solid #cbd5e1; font-size: 12px; box-sizing: border-box;">
+                <div style="margin-bottom: 8px; font-weight: 600; color: #334155; display: flex; align-items: center; justify-content: space-between;">
+                    <span>Gemini AI Activation</span>
+                    <a href="https://aistudio.google.com/" target="_blank" style="font-size: 10px; color: #0f766e; text-decoration: underline;">Get free Key</a>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <input type="password" id="chatbot-apikey-input" placeholder="Paste Gemini API Key..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; outline: none; background: white;">
+                    <button id="chatbot-savekey-btn" style="padding: 6px 10px; background: #0f766e; color: white; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 11px; white-space: nowrap;">Save</button>
+                </div>
+                <div id="chatbot-key-status" style="margin-top: 6px; font-size: 10px; color: #64748b; font-style: italic;">No key loaded. Running in local fallback mode.</div>
+            </div>
+
+            <div class="chatbot-messages" id="chatbot-messages"></div>
+
+            <div class="chatbot-suggestions" id="chatbot-suggestions"></div>
+
+            <form class="chatbot-input-bar" id="chatbot-form">
+                <input type="text" id="chatbot-input" placeholder="Ask about fever, booking a doctor..." autocomplete="off">
+                <button type="submit" class="chatbot-send-btn" id="chatbot-send-btn" disabled>
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    `;
+
+    while (wrapper.firstChild) {
+        document.body.appendChild(wrapper.firstChild);
+    }
+
+    const chatbotToggleBtn = document.getElementById('chatbot-toggle-btn');
+    const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+    const chatbotSettingsBtn = document.getElementById('chatbot-settings-btn');
+    const chatbotSettingsPanel = document.getElementById('chatbot-settings-panel');
+    const chatbotApikeyInput = document.getElementById('chatbot-apikey-input');
+    const chatbotSavekeyBtn = document.getElementById('chatbot-savekey-btn');
+    const chatbotKeyStatus = document.getElementById('chatbot-key-status');
+
+    const chatbotContainer = document.getElementById('chatbot-container');
+    const chatbotMessages = document.getElementById('chatbot-messages');
+    const chatbotSuggestions = document.getElementById('chatbot-suggestions');
+    const chatbotForm = document.getElementById('chatbot-form');
+    const chatbotInput = document.getElementById('chatbot-input');
+    const chatbotSendBtn = document.getElementById('chatbot-send-btn');
+    const chatbotBadge = document.getElementById('chatbot-badge');
+
+    // Settings panel toggling logic
+    chatbotSettingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        chatbotSettingsPanel.style.display = chatbotSettingsPanel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    chatbotSettingsPanel.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    // Load saved API key on init
+    const savedKey = localStorage.getItem('chatbot_gemini_api_key') || "";
+    if (savedKey) {
+        chatbotApikeyInput.value = savedKey;
+        chatbotKeyStatus.textContent = "🔑 API Key loaded! Conversational AI mode is active.";
+        chatbotKeyStatus.style.color = "#0f766e";
+    }
+
+    // Save key listener
+    chatbotSavekeyBtn.addEventListener('click', () => {
+        const newKey = chatbotApikeyInput.value.trim();
+        if (newKey) {
+            localStorage.setItem('chatbot_gemini_api_key', newKey);
+            chatbotKeyStatus.textContent = "✅ Key saved successfully! Live AI active.";
+            chatbotKeyStatus.style.color = "#0f766e";
+        } else {
+            localStorage.removeItem('chatbot_gemini_api_key');
+            chatbotKeyStatus.textContent = "ℹ️ Key removed. Local fallback mode active.";
+            chatbotKeyStatus.style.color = "#64748b";
+        }
+        setTimeout(() => {
+            chatbotSettingsPanel.style.display = 'none';
+        }, 1200);
+    });
+
+    let chatHistory = getLocalItem('chatbot_history', []);
+
+    if (chatHistory.length > 0) {
+        chatHistory.forEach(item => {
+            appendMessage(item.text, item.sender);
+        });
+        const lastBotMsg = [...chatHistory].reverse().find(x => x.sender === 'bot');
+        if (lastBotMsg && lastBotMsg.suggestions) {
+            renderSuggestions(lastBotMsg.suggestions);
+        } else {
+            renderSuggestions(["Medicine for Fever", "How to Book a Doctor", "Check My Stats"]);
+        }
+    } else {
+        sendQuery("");
+    }
+
+    chatbotToggleBtn.addEventListener('click', () => {
+        chatbotContainer.classList.toggle('active');
+        chatbotBadge.style.display = 'none';
+        chatbotInput.focus();
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    });
+
+    chatbotCloseBtn.addEventListener('click', () => {
+        chatbotContainer.classList.remove('active');
+    });
+
+    window.addEventListener('click', (e) => {
+        if (!chatbotContainer.contains(e.target) && !chatbotToggleBtn.contains(e.target)) {
+            chatbotContainer.classList.remove('active');
+        }
+    });
+
+    async function sendQuery(text) {
+        if (text !== "") {
+            appendMessage(text, 'user');
+            saveToHistory(text, 'user');
+        }
+
+        const typingIndicator = appendTypingIndicator();
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+        try {
+            const response = await fetch(`${API_BASE}/api/chatbot/query`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    message: text,
+                    apiKey: localStorage.getItem('chatbot_gemini_api_key') || ""
+                })
+            });
+
+            typingIndicator.remove();
+
+            if (!response.ok) throw new Error("Failed to get response");
+            const data = await response.json();
+
+            appendMessage(data.reply, 'bot');
+            saveToHistory(data.reply, 'bot', data.suggestions);
+            renderSuggestions(data.suggestions);
+
+            if (data.action) {
+                await executeAction(data.action, data.actionData);
+            }
+        } catch (err) {
+            console.error(err);
+            typingIndicator.remove();
+            appendMessage("Sorry, I'm having trouble connecting to the health chatbot server. Please check if the backend is running.", 'bot');
+            renderSuggestions(["Medicine for Fever", "How to Book a Doctor", "Check My Stats"]);
+        }
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    function appendMessage(text, sender) {
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble ${sender}`;
+
+        if (sender === 'bot') {
+            bubble.innerHTML = formatMarkdown(text);
+        } else {
+            bubble.textContent = text;
+        }
+
+        chatbotMessages.appendChild(bubble);
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    function saveToHistory(text, sender, suggestions = null) {
+        let history = getLocalItem('chatbot_history', []);
+        history.push({ text, sender, suggestions, time: Date.now() });
+        if (history.length > 50) history.shift();
+        setLocalItem('chatbot_history', history);
+    }
+
+    function appendTypingIndicator() {
+        const indicator = document.createElement('div');
+        indicator.className = 'typing-indicator';
+        indicator.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+        chatbotMessages.appendChild(indicator);
+        return indicator;
+    }
+
+    function formatMarkdown(text) {
+        let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/_(.*?)_/g, '<em>$1</em>');
+
+        const lines = html.split('\n');
+        let inList = false;
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (line.startsWith('•') || line.startsWith('-')) {
+                let content = line.substring(1).trim();
+                if (!inList) {
+                    lines[i] = '<ul><li>' + content + '</li>';
+                    inList = true;
+                } else {
+                    lines[i] = '<li>' + content + '</li>';
+                }
+            } else {
+                if (inList) {
+                    lines[i - 1] = lines[i - 1] + '</ul>';
+                    inList = false;
+                }
+                if (line.length > 0) {
+                    lines[i] = '<p>' + line + '</p>';
+                }
+            }
+        }
+        if (inList) {
+            lines[lines.length - 1] = lines[lines.length - 1] + '</ul>';
+        }
+        return lines.join('\n');
+    }
+
+    function renderSuggestions(suggestionsList) {
+        chatbotSuggestions.innerHTML = '';
+        if (!suggestionsList || suggestionsList.length === 0) return;
+        suggestionsList.forEach(s => {
+            const chip = document.createElement('div');
+            chip.className = 'suggestion-chip';
+            chip.textContent = s;
+            chip.addEventListener('click', () => {
+                sendQuery(s);
+            });
+            chatbotSuggestions.appendChild(chip);
+        });
+    }
+
+    async function executeAction(action, actionData) {
+        console.log("Chatbot executing action:", action, actionData);
+        if (action === 'log_water') {
+            const amount = parseFloat(actionData) || 0.25;
+            const currentData = await getDashboardData();
+            currentData.water = Math.max(0.0, Math.min(10.0, (currentData.water || 0.0) + amount));
+            await saveDashboardData(currentData);
+            
+            // Reload page metrics if function exists in global scope
+            if (typeof loadStats === 'function') {
+                await loadStats();
+            } else if (typeof loadData === 'function') {
+                await loadData();
+            }
+        } else if (action === 'book_appointment') {
+            const doctorName = actionData || "Dr. Marcus Chen";
+            if (window.location.pathname.includes("book.html")) {
+                const bookNowBtn = Array.from(document.querySelectorAll('.book-now-btn'))
+                    .find(btn => btn.getAttribute('data-doctor').toLowerCase().includes(doctorName.toLowerCase().replace("dr. ", "")));
+                if (bookNowBtn) {
+                    bookNowBtn.click();
+                }
+            } else {
+                alert("Navigating to Appointments to book with " + doctorName + "...");
+                window.location.href = `book.html?doctor=${encodeURIComponent(doctorName)}`;
+            }
+        } else if (action === 'navigate') {
+            const pageMap = {
+                'home': 'interface.html',
+                'appointments': 'book.html',
+                'health': 'health.html',
+                'pharmacy': 'medicines.html',
+                'profile': 'profile.html',
+                'reports': 'reports.html',
+                'emergency': 'emergency.html'
+            };
+            const targetFile = pageMap[actionData.toLowerCase().trim()];
+            if (targetFile && !window.location.pathname.includes(targetFile)) {
+                window.location.href = targetFile;
+            }
+        }
+    }
+
+    chatbotForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const messageText = chatbotInput.value.trim();
+        if (!messageText) return;
+        chatbotInput.value = '';
+        chatbotSendBtn.disabled = true;
+        sendQuery(messageText);
+    });
+
+    chatbotInput.addEventListener('input', () => {
+        chatbotSendBtn.disabled = chatbotInput.value.trim() === '';
+    });
+}
+
+// Auto-run on all pages
+document.addEventListener('DOMContentLoaded', () => {
+    initGlobalChatbot();
+});

@@ -267,6 +267,18 @@ document.addEventListener('DOMContentLoaded', () => {
             bookingFormContainer.scrollIntoView({ behavior: 'smooth' });
         }
     });
+
+    // Auto-open booking drawer if doctor is specified in query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const doctorParam = urlParams.get('doctor');
+    if (doctorParam) {
+        setTimeout(() => {
+            const matches = DOCTORS.filter(d => d.name.toLowerCase().includes(doctorParam.toLowerCase().replace("dr. ", "")));
+            if (matches.length > 0) {
+                openBookingForm(matches[0].name);
+            }
+        }, 300);
+    }
 });
 </script>
 </body>
