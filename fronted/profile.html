@@ -27,29 +27,37 @@
         <!-- User Profile Card -->
         <div class="card user-profile-card">
             <div class="profile-main">
-                <div class="profile-big-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                <div class="profile-big-avatar" id="profile-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
                 <div class="profile-main-info">
-                    <h4>John Doe</h4>
-                    <p>Patient ID: #HT-98745</p>
+                    <h4 id="profile-fullname">John Doe</h4>
+                    <p id="profile-role">Patient ID: #HT-98745</p>
                 </div>
             </div>
             
             <div class="profile-details-grid">
                 <div class="details-item">
-                    <span>Blood Type</span>
-                    <strong>O Positive (O+)</strong>
+                    <span>Username</span>
+                    <strong id="profile-username">john_doe</strong>
                 </div>
                 <div class="details-item">
-                    <span>Height</span>
-                    <strong>178 cm</strong>
+                    <span>Gender</span>
+                    <strong id="profile-gender">Male</strong>
                 </div>
                 <div class="details-item">
-                    <span>Weight</span>
-                    <strong>74 kg</strong>
+                    <span>Age</span>
+                    <strong id="profile-age">30 years</strong>
                 </div>
                 <div class="details-item">
-                    <span>BMI</span>
-                    <strong>23.4 (Normal)</strong>
+                    <span>Phone</span>
+                    <strong id="profile-phone">+1 555-0199</strong>
+                </div>
+                <div class="details-item" style="grid-column: span 2;">
+                    <span>Gmail Address</span>
+                    <strong id="profile-gmail">john.doe@gmail.com</strong>
+                </div>
+                <div class="details-item" style="grid-column: span 2;">
+                    <span>Address</span>
+                    <strong id="profile-address">123 Health Ave, Wellness City</strong>
                 </div>
             </div>
         </div>
@@ -69,6 +77,13 @@
             </div>
         </div>
 
+        <!-- Logout Action Button -->
+        <div style="margin-top: 24px; margin-bottom: 24px; text-align: center;">
+            <button class="submit-btn" id="profile-logout-btn" style="background: #ef4444; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; width: 100%;">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout from Account
+            </button>
+        </div>
+
     </div>
 
     <!-- Bottom Navigation Bar -->
@@ -82,10 +97,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Navigation highlights
     initNavbar('profile');
 
+    const user = getCurrentUser();
+    if (user) {
+        document.getElementById('profile-fullname').innerText = user.fullname;
+        document.getElementById('profile-role').innerText = user.role === 'doctor' ? 'Clinical Specialist' : `Patient ID: #HT-${Math.floor(10000 + Math.random() * 90000)}`;
+        document.getElementById('profile-avatar').innerHTML = user.role === 'doctor' ? '<i class="fa-solid fa-user-md" style="color: #4f46e5;"></i>' : '<i class="fa-solid fa-user-astronaut"></i>';
+        
+        document.getElementById('profile-username').innerText = user.username;
+        document.getElementById('profile-gender').innerText = user.gender;
+        document.getElementById('profile-age').innerText = `${user.age} years`;
+        document.getElementById('profile-phone').innerText = user.phone;
+        document.getElementById('profile-gmail').innerText = user.gmail;
+        document.getElementById('profile-address').innerText = user.address;
+        
+        // Hide emergency contact card for doctor portal
+        if (user.role === 'doctor') {
+            const emergencyCard = document.querySelector('.emergency-contacts-card');
+            if (emergencyCard) emergencyCard.style.display = 'none';
+        }
+    }
+
     const callBtn = document.getElementById('call-emergency-contact');
-    callBtn.addEventListener('click', () => {
-        alert('📞 Dialing Jane Doe (Spouse)...\n\nSimulating outgoing emergency contact voice call.');
-    });
+    if (callBtn) {
+        callBtn.addEventListener('click', () => {
+            alert('📞 Dialing Jane Doe (Spouse)...\n\nSimulating outgoing emergency contact voice call.');
+        });
+    }
+
+    const logoutBtn = document.getElementById('profile-logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            logout();
+        });
+    }
 });
 </script>
 </body>

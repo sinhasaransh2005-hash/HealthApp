@@ -15,11 +15,11 @@
 </head>
 <body>
 
-<div class="app-wrapper">
+<div class="app-wrapper" style="display: none;">
     <div class="container">
 
         <!-- Header -->
-        <header>
+        <header id="main-app-header">
             <div class="header-main">
                 <div>
                     <h2 id="greeting-title">Good Morning</h2>
@@ -31,75 +31,123 @@
             </div>
         </header>
 
-        <!-- Search Box -->
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" placeholder="Search doctors, medicines...">
+        <!-- Dashboard Views -->
+        <div id="patient-dashboard-view">
+            <!-- Search Box -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" placeholder="Search doctors, medicines...">
+            </div>
+
+            <!-- Health Score Card -->
+            <div class="health-score card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-heart-pulse icon-teal"></i> Health Score</h3>
+                    <span class="pulse-indicator"></span>
+                </div>
+                <div class="score" id="score-text">--/100</div>
+                <div class="progress">
+                    <div class="progress-fill" id="score-progress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Upcoming Appointment Card -->
+            <div class="appointment card">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-calendar-check icon-teal"></i> Upcoming Appointment</h3>
+                </div>
+                <p id="appointment-doctor">Loading...</p>
+                <span id="appointment-time">Loading...</span>
+            </div>
+
+            <!-- Quick Actions -->
+            <h3 class="section-title">Quick Actions</h3>
+            <div class="actions">
+                <a href="book.html" class="action-btn" id="action-book">
+                    <i class="fa-solid fa-user-doctor"></i> Book
+                </a>
+                <a href="reports.html" class="action-btn" id="action-reports">
+                    <i class="fa-solid fa-file-medical"></i> Reports
+                </a>
+                <a href="medicines.html" class="action-btn" id="action-medicines">
+                    <i class="fa-solid fa-pills"></i> Medicines
+                </a>
+                <a href="emergency.html" class="action-btn emergency" id="action-emergency">
+                    <i class="fa-solid fa-truck-medical"></i> Emergency
+                </a>
+            </div>
+
+            <!-- Today's Stats -->
+            <h3 class="section-title">Today's Stats</h3>
+            <div class="stats-grid">
+                <div class="stat-card" data-metric="heartRate">
+                    <div class="stat-icon"><i class="fa-solid fa-heartbeat"></i></div>
+                    <h4>Heart Rate</h4>
+                    <p id="stat-heartRate">-- BPM</p>
+                </div>
+
+                <div class="stat-card" data-metric="steps">
+                    <div class="stat-icon"><i class="fa-solid fa-shoe-prints"></i></div>
+                    <h4>Steps</h4>
+                    <p id="stat-steps">--</p>
+                </div>
+
+                <div class="stat-card" data-metric="water">
+                    <div class="stat-icon"><i class="fa-solid fa-glass-water"></i></div>
+                    <h4>Water</h4>
+                    <p id="stat-water">-- L</p>
+                </div>
+
+                <div class="stat-card" data-metric="sleep">
+                    <div class="stat-icon"><i class="fa-solid fa-moon"></i></div>
+                    <h4>Sleep</h4>
+                    <p id="stat-sleep">-- hrs</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Health Score Card -->
-        <div class="health-score card">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-heart-pulse icon-teal"></i> Health Score</h3>
-                <span class="pulse-indicator"></span>
-            </div>
-            <div class="score" id="score-text">--/100</div>
-            <div class="progress">
-                <div class="progress-fill" id="score-progress" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <!-- Upcoming Appointment Card -->
-        <div class="appointment card">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-calendar-check icon-teal"></i> Upcoming Appointment</h3>
-            </div>
-            <p id="appointment-doctor">Loading...</p>
-            <span id="appointment-time">Loading...</span>
-        </div>
-
-        <!-- Quick Actions -->
-        <h3 class="section-title">Quick Actions</h3>
-        <div class="actions">
-            <a href="book.html" class="action-btn" id="action-book">
-                <i class="fa-solid fa-user-doctor"></i> Book
-            </a>
-            <a href="reports.html" class="action-btn" id="action-reports">
-                <i class="fa-solid fa-file-medical"></i> Reports
-            </a>
-            <a href="medicines.html" class="action-btn" id="action-medicines">
-                <i class="fa-solid fa-pills"></i> Medicines
-            </a>
-            <a href="emergency.html" class="action-btn emergency" id="action-emergency">
-                <i class="fa-solid fa-truck-medical"></i> Emergency
-            </a>
-        </div>
-
-        <!-- Today's Stats -->
-        <h3 class="section-title">Today's Stats</h3>
-        <div class="stats-grid">
-            <div class="stat-card" data-metric="heartRate">
-                <div class="stat-icon"><i class="fa-solid fa-heartbeat"></i></div>
-                <h4>Heart Rate</h4>
-                <p id="stat-heartRate">-- BPM</p>
+        <!-- Doctor Dashboard View -->
+        <div id="doctor-dashboard-view" style="display: none;">
+            <!-- Doctor Header Banner -->
+            <div class="doctor-header">
+                <div class="doctor-header-main">
+                    <div>
+                        <h2 id="doctor-greeting-title">Welcome, Doctor</h2>
+                        <p>Doctor Portal • HealthTrack Companion</p>
+                    </div>
+                    <button class="doctor-logout-header-btn" id="doctor-header-logout" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="stat-card" data-metric="steps">
-                <div class="stat-icon"><i class="fa-solid fa-shoe-prints"></i></div>
-                <h4>Steps</h4>
-                <p id="stat-steps">--</p>
+            <div class="doctor-stats" style="margin-top: 10px;">
+                <div class="doctor-stat-card">
+                    <h4>Total Appointments</h4>
+                    <p id="doc-stat-total">--</p>
+                </div>
+                <div class="doctor-stat-card">
+                    <h4>Approved</h4>
+                    <p id="doc-stat-approved" style="color: #10b981;">--</p>
+                </div>
+                <div class="doctor-stat-card">
+                    <h4>Pending</h4>
+                    <p id="doc-stat-pending" style="color: #f59e0b;">--</p>
+                </div>
             </div>
 
-            <div class="stat-card" data-metric="water">
-                <div class="stat-icon"><i class="fa-solid fa-glass-water"></i></div>
-                <h4>Water</h4>
-                <p id="stat-water">-- L</p>
+            <div class="doctor-list-card">
+                <h3><i class="fa-solid fa-calendar-check"></i> Patient Appointments</h3>
+                <div class="doctor-appointments-list" id="doctor-appointments-list">
+                    <p style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">No patient bookings found.</p>
+                </div>
             </div>
-
-            <div class="stat-card" data-metric="sleep">
-                <div class="stat-icon"><i class="fa-solid fa-moon"></i></div>
-                <h4>Sleep</h4>
-                <p id="stat-sleep">-- hrs</p>
+            
+            <div class="doctor-list-card">
+                <h3><i class="fa-solid fa-file-prescription"></i> Uploaded Clinical Reports</h3>
+                <div id="doctor-reports-list" style="display: flex; flex-direction: column; gap: 10px;">
+                    <p style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">No reports uploaded.</p>
+                </div>
             </div>
         </div>
 
@@ -154,12 +202,14 @@
     </div>
 </div>
 
+
+
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     // Nav bar setup
     initNavbar('home');
 
-    // DOM selectors
+    // DOM selectors - General Metrics Dashboard
     const scoreText = document.getElementById('score-text');
     const scoreProgress = document.getElementById('score-progress');
     const appointmentDoctor = document.getElementById('appointment-doctor');
@@ -183,9 +233,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const inputDoctor = document.getElementById('input-doctor');
     const inputTime = document.getElementById('input-time');
 
+    // Doctor logout
+    const doctorHeaderLogout = document.getElementById('doctor-header-logout');
+
     let cacheData = null;
 
-    // Load data
+    // Doctor logout btn in header
+    doctorHeaderLogout.addEventListener('click', (e) => {
+        e.preventDefault();
+        logout();
+    });
+
+    // Load patient data
     async function loadData() {
         cacheData = await getDashboardData();
         
@@ -194,7 +253,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         let greeting = 'Good Morning';
         if (hr >= 12 && hr < 17) greeting = 'Good Afternoon';
         else if (hr >= 17) greeting = 'Good Evening';
-        document.getElementById('greeting-title').innerText = greeting;
+        
+        const user = getCurrentUser();
+        const userFirstName = user ? user.fullname.split(' ')[0] : 'Guest';
+        document.getElementById('greeting-title').innerText = `${greeting}, ${userFirstName}`;
 
         // Populate fields
         scoreText.textContent = `${cacheData.healthScore}/100`;
@@ -209,9 +271,190 @@ document.addEventListener('DOMContentLoaded', async () => {
         statSleep.textContent = `${cacheData.sleep.toFixed(1)} hrs`;
     }
 
-    await loadData();
+    // Doctor Dashboard Handler
+    function loadDoctorDashboard(doctor) {
+        const docGreeting = document.getElementById('doctor-greeting-title');
+        if (docGreeting) {
+            docGreeting.innerText = `Welcome, ${doctor.fullname}`;
+        }
+        
+        // Fetch appointments
+        const bookings = getLocalItem('appointment_bookings', []);
+        
+        // Filter appointments for this doctor's specialty or name
+        const filterName = doctor.fullname.toLowerCase().replace('dr. ', '');
+        const doctorBookings = bookings.filter(b => 
+            b.doctorName.toLowerCase().includes(filterName) || 
+            b.doctorName.toLowerCase() === doctor.username.toLowerCase()
+        );
+        
+        // Render stats
+        const total = doctorBookings.length;
+        const approved = doctorBookings.filter(b => b.status === 'Approved').length;
+        const pending = doctorBookings.filter(b => b.status === 'Pending' || !b.status).length;
+        
+        document.getElementById('doc-stat-total').innerText = total;
+        document.getElementById('doc-stat-approved').innerText = approved;
+        document.getElementById('doc-stat-pending').innerText = pending;
+        
+        // Render list
+        const listContainer = document.getElementById('doctor-appointments-list');
+        listContainer.innerHTML = '';
+        
+        if (doctorBookings.length === 0) {
+            listContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">No patient bookings found.</p>';
+        } else {
+            doctorBookings.forEach((b, index) => {
+                const item = document.createElement('div');
+                item.className = 'appointment-item';
+                
+                const currentStatus = b.status || 'Pending';
+                let actionHtml = '';
+                
+                if (currentStatus === 'Pending') {
+                    actionHtml = `
+                        <div class="appointment-actions">
+                            <button class="appointment-action-btn approve" style="background:#10b981; color:white;"><i class="fa-solid fa-check"></i> Approve</button>
+                            <button class="appointment-action-btn cancel" style="background:#ef4444; color:white;"><i class="fa-solid fa-times"></i> Cancel</button>
+                        </div>
+                    `;
+                } else {
+                    const statusClass = currentStatus === 'Approved' ? 'status-approved' : 'status-cancelled';
+                    const icon = currentStatus === 'Approved' ? 'fa-circle-check' : 'fa-circle-xmark';
+                    actionHtml = `
+                        <span class="appointment-status-text ${statusClass}">
+                            <i class="fa-solid ${icon}"></i> ${currentStatus}
+                        </span>
+                    `;
+                }
+                
+                const patientName = b.patientName || 'John Doe';
+                const age = b.patientAge || 30;
+                const gender = b.patientGender || 'Male';
+                
+                item.innerHTML = `
+                    <div class="appointment-item-header">
+                        <div>
+                            <div class="appointment-patient-name">${patientName}</div>
+                            <div class="appointment-patient-info">Age: ${age} • Gender: ${gender}</div>
+                        </div>
+                        <span class="appointment-date-badge">${b.bookingDate} (${b.timeSlot})</span>
+                    </div>
+                    <div class="appointment-details">
+                        Doctor Specialist: <strong>${b.doctorName}</strong>
+                    </div>
+                    ${actionHtml}
+                `;
+                
+                const approveBtn = item.querySelector('.approve');
+                const cancelBtn = item.querySelector('.cancel');
+                
+                if (approveBtn) {
+                    approveBtn.addEventListener('click', () => updateBookingStatus(b, 'Approved'));
+                }
+                if (cancelBtn) {
+                    cancelBtn.addEventListener('click', () => updateBookingStatus(b, 'Cancelled'));
+                }
+                
+                listContainer.appendChild(item);
+            });
+        }
+        
+        // Render patient clinical reports
+        const reportsContainer = document.getElementById('doctor-reports-list');
+        reportsContainer.innerHTML = '';
+        
+        const medicalReports = getLocalItem('medical_reports', []);
+        if (medicalReports.length === 0) {
+            reportsContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">No patient reports uploaded.</p>';
+        } else {
+            medicalReports.forEach(rep => {
+                const row = document.createElement('div');
+                row.style.background = '#fafbfd';
+                row.style.border = '1px solid var(--border-color)';
+                row.style.borderRadius = 'var(--radius-sm)';
+                row.style.padding = '12px';
+                row.style.display = 'flex';
+                row.style.justifyContent = 'space-between';
+                row.style.alignItems = 'center';
+                
+                const viewUrl = rep.url || '#';
+                
+                row.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                        <i class="fa-solid fa-file-medical" style="color: #4f46e5; font-size: 20px; flex-shrink: 0;"></i>
+                        <div style="min-width: 0;">
+                            <span style="font-weight: 500; font-size: 13px; color: var(--text-main); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${rep.filename}</span>
+                            <span style="font-size: 10px; color: var(--text-muted); display: block;">${rep.uploadDate} • ${rep.size}</span>
+                        </div>
+                    </div>
+                    <a href="${viewUrl}" target="_blank" style="background:#4f46e5; color:white; padding:6px 12px; border-radius:var(--radius-sm); text-decoration:none; font-size:11px; font-weight:600; flex-shrink:0;">View</a>
+                `;
+                reportsContainer.appendChild(row);
+            });
+        }
+    }
 
-    // Modal listeners
+    function updateBookingStatus(booking, newStatus) {
+        const bookings = getLocalItem('appointment_bookings', []);
+        const found = bookings.find(b => 
+            b.doctorName === booking.doctorName && 
+            b.bookingDate === booking.bookingDate && 
+            b.timeSlot === booking.timeSlot &&
+            (b.patientName || 'John Doe') === (booking.patientName || 'John Doe')
+        );
+        if (found) {
+            found.status = newStatus;
+            setLocalItem('appointment_bookings', bookings);
+            
+            // Re-render dashboard
+            const user = getCurrentUser();
+            if (user) loadDoctorDashboard(user);
+        }
+    }
+
+    // Authentication Gate & Initialize View Routing
+    async function checkAuthAndInit() {
+        const user = getCurrentUser();
+        const appWrapper = document.querySelector('.app-wrapper');
+        
+        if (!user) {
+            // Unauthenticated: redirect to login page
+            window.location.href = 'login.html';
+        } else {
+            // Authenticated: show app dashboard
+            appWrapper.style.display = 'flex';
+            
+            if (user.role === 'patient') {
+                document.body.classList.remove('doctor-portal');
+                document.getElementById('main-app-header').style.display = 'block';
+                document.getElementById('patient-dashboard-view').style.display = 'block';
+                document.getElementById('doctor-dashboard-view').style.display = 'none';
+                
+                // Show header metrics settings icon for patient
+                openSettingsBtn.style.display = 'flex';
+                
+                initNavbar('home');
+                await loadData();
+            } else if (user.role === 'doctor') {
+                document.body.classList.add('doctor-portal');
+                document.getElementById('main-app-header').style.display = 'none';
+                document.getElementById('patient-dashboard-view').style.display = 'none';
+                document.getElementById('doctor-dashboard-view').style.display = 'block';
+                
+                // Hide header metrics settings gear for doctor
+                openSettingsBtn.style.display = 'none';
+                
+                initNavbar('home');
+                loadDoctorDashboard(user);
+            }
+        }
+    }
+
+    // Execute Gate Check
+    await checkAuthAndInit();
+
+    // Modal listeners (Patient Dashboard Metric updates)
     openSettingsBtn.addEventListener('click', () => {
         if (cacheData) {
             inputScore.value = cacheData.healthScore;

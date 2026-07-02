@@ -69,6 +69,104 @@ function setLocalItem(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
 }
 
+// User Authentication Helpers
+function getCurrentUser() {
+    const val = sessionStorage.getItem('current_user');
+    if (!val) return null;
+    try {
+        return JSON.parse(val);
+    } catch(e) {
+        return val;
+    }
+}
+
+function setCurrentUser(user, role) {
+    if (user) {
+        user.role = role;
+        sessionStorage.setItem('current_user', JSON.stringify(user));
+    } else {
+        sessionStorage.removeItem('current_user');
+    }
+}
+
+function logout() {
+    sessionStorage.removeItem('current_user');
+    if (window.location.protocol.startsWith('http')) {
+        window.location.href = '/logout';
+    } else {
+        const currentPage = window.location.pathname.split('/').pop().toLowerCase();
+        const redirectPage = 'login.html';
+        
+        // Redirect if not already on the login page
+        if (currentPage !== 'login.html' && currentPage !== '') {
+            window.location.href = redirectPage;
+        } else {
+            window.location.reload();
+        }
+    }
+}
+
+
+function getRegisteredUsers() {
+    let users = getLocalItem('registered_users', null);
+    if (!users) {
+        // Pre-populate with default patient and doctor accounts for convenience
+        users = [
+            {
+                fullname: "John Doe",
+                username: "patient",
+                gender: "Male",
+                age: 30,
+                address: "123 Health Ave, Wellness City",
+                gmail: "john.doe@gmail.com",
+                phone: "+1 555-0199",
+                password: "password",
+                role: "patient"
+            },
+            {
+                fullname: "Dr. Sarah Jenkins",
+                username: "doctor",
+                gender: "Female",
+                age: 42,
+                address: "City Hospital, Suite 400",
+                gmail: "sarah.jenkins@gmail.com",
+                phone: "+1 555-0144",
+                password: "password",
+                role: "doctor"
+            }
+        ];
+        setLocalItem('registered_users', users);
+    }
+    return users;
+}
+
+function registerUser(user) {
+    const users = getRegisteredUsers();
+    users.push(user);
+    setLocalItem('registered_users', users);
+}
+
+function checkAuthGuard() {
+    const currentPage = window.location.pathname.split('/').pop().toLowerCase();
+    const isLandingPage = currentPage === '' || currentPage === 'login.html' || currentPage === 'index.html';
+    const user = getCurrentUser();
+    
+    if (user && user.role === 'doctor') {
+        document.body.classList.add('doctor-portal');
+    } else {
+        document.body.classList.remove('doctor-portal');
+    }
+    
+    if (!user && !isLandingPage) {
+        const redirectPage = 'login.html';
+        window.location.href = redirectPage;
+    }
+}
+
+// Run auth guard check immediately when file loads
+checkAuthGuard();
+
+
 // Fetch dashboard data with fallback
 async function getDashboardData() {
     try {
@@ -249,14 +347,37 @@ function initNavbar(activeTarget) {
     const bottomNav = document.querySelector('.bottom-nav');
     if (!bottomNav) return;
     
-    // Clear and build bottom nav links
-    bottomNav.innerHTML = `
-        <a href="interface.html" class="nav-link ${activeTarget === 'home' ? 'active' : ''}"><i class="fa-solid fa-house"></i> <span>Home</span></a>
-        <a href="book.html" class="nav-link ${activeTarget === 'appointments' ? 'active' : ''}"><i class="fa-solid fa-calendar"></i> <span>Appointments</span></a>
-        <a href="health.html" class="nav-link ${activeTarget === 'health' ? 'active' : ''}"><i class="fa-solid fa-shield-halved"></i> <span>Health</span></a>
-        <a href="medicines.html" class="nav-link ${activeTarget === 'pharmacy' ? 'active' : ''}"><i class="fa-solid fa-prescription-bottle-medical"></i> <span>Pharmacy</span></a>
-        <a href="profile.html" class="nav-link ${activeTarget === 'profile' ? 'active' : ''}"><i class="fa-solid fa-circle-user"></i> <span>Profile</span></a>
-    `;
+    const user = getCurrentUser();
+    const isDoctor = user && user.role === 'doctor';
+    
+    let navContent = '';
+    if (isDoctor) {
+        navContent = `
+            <a href="interface.html" class="nav-link ${activeTarget === 'home' ? 'active' : ''}"><i class="fa-solid fa-house-user"></i> <span>Dashboard</span></a>
+            <a href="reports.html" class="nav-link ${activeTarget === 'reports' ? 'active' : ''}"><i class="fa-solid fa-file-prescription"></i> <span>Patient Reports</span></a>
+            <a href="profile.html" class="nav-link ${activeTarget === 'profile' ? 'active' : ''}"><i class="fa-solid fa-user-md"></i> <span>Profile</span></a>
+            <a href="#" class="nav-link" id="nav-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+        `;
+    } else {
+        navContent = `
+            <a href="interface.html" class="nav-link ${activeTarget === 'home' ? 'active' : ''}"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+            <a href="book.html" class="nav-link ${activeTarget === 'appointments' ? 'active' : ''}"><i class="fa-solid fa-calendar"></i> <span>Book</span></a>
+            <a href="health.html" class="nav-link ${activeTarget === 'health' ? 'active' : ''}"><i class="fa-solid fa-shield-halved"></i> <span>Health</span></a>
+            <a href="medicines.html" class="nav-link ${activeTarget === 'pharmacy' ? 'active' : ''}"><i class="fa-solid fa-prescription-bottle-medical"></i> <span>Pharmacy</span></a>
+            <a href="profile.html" class="nav-link ${activeTarget === 'profile' ? 'active' : ''}"><i class="fa-solid fa-circle-user"></i> <span>Profile</span></a>
+        `;
+    }
+    
+    bottomNav.innerHTML = navContent;
+    
+    // Bind click handler for logout if it exists
+    const logoutBtn = document.getElementById('nav-logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+    }
 }
 
 // Global Chatbot Injection & Logic
