@@ -2,6 +2,10 @@ package com.healthapp.backend.controller;
 
 import com.healthapp.backend.model.DashboardData;
 import com.healthapp.backend.model.MedicalReport;
+import com.healthapp.backend.model.ChatRequest;
+import com.healthapp.backend.model.ChatResponse;
+import com.healthapp.backend.service.ChatbotService;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.healthapp.backend.model.AppointmentBooking;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +34,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*") // Allow frontend requests if served from different origins during dev
 public class HealthController {
+
+    @Autowired
+    private ChatbotService chatbotService;
 
     private final Path uploadDir = Paths.get("uploads");
     
@@ -219,5 +226,12 @@ public class HealthController {
         int exp = (int) (Math.log(bytes) / Math.log(1024));
         char pre = "KMGTPE".charAt(exp - 1);
         return String.format("%.1f %cB", bytes / Math.pow(1024, exp), pre);
+    }
+
+    // Chatbot query endpoint
+    @PostMapping("/chatbot/query")
+    public ResponseEntity<ChatResponse> queryChatbot(@RequestBody ChatRequest request) {
+        ChatResponse response = chatbotService.processQuery(request.getMessage(), request.getApiKey(), dashboardData);
+        return ResponseEntity.ok(response);
     }
 }

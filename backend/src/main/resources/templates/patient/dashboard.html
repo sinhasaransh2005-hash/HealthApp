@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - HealthTrack</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --primary-light: #38bdf8;
+            --primary-glow: rgba(56, 189, 248, 0.15);
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 480px;
+            background: #f8fafc;
+            min-height: 100vh;
+            box-shadow: 0 0 40px rgba(15, 23, 42, 0.08);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 90px; /* space for nav */
+        }
+
+        .container {
+            padding: 24px;
+        }
+
+        header {
+            margin-bottom: 24px;
+        }
+
+        .header-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.06);
+        }
+
+        .card-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-header-custom h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header-custom h3 i {
+            color: var(--primary);
+        }
+
+        .pulse-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .score {
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .progress {
+            height: 8px;
+            background-color: #f1f5f9;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-custom {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 24px 0 16px 0;
+            color: var(--text-main);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            height: 76px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.05);
+        }
+
+        .nav-link-custom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            gap: 4px;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 8px;
+        }
+
+        .nav-link-custom i {
+            font-size: 20px;
+            transition: var(--transition);
+        }
+
+        .nav-link-custom.active, .nav-link-custom:hover {
+            color: var(--primary);
+        }
+
+        .nav-link-custom.active i {
+            transform: translateY(-2px);
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            font-size: 14px;
+            background: #fafbfd;
+        }
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+            background: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 15px;
+        }
+
+        .details-item {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        .details-item span {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .details-item strong {
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        /* Statuses */
+        .status-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-approved { background: #d1fae5; color: #059669; }
+        .status-cancelled { background: #fee2e2; color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <div class="container">
+        
+        <!-- Header -->
+        <header>
+            <div class="header-main">
+                <div>
+                    <h2 id="greeting-title" th:text="'Good Day, ' + ${patient.fullname.split(' ')[0]}">Good Day, Patient</h2>
+                    <p>Stay healthy today</p>
+                </div>
+                <!-- Form Logout in Header -->
+                <form th:action="@{/logout}" method="POST" id="logout-form-header">
+                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <!-- Alert Banners -->
+        <div th:if="${errorMessage}" class="alert alert-danger p-3 mb-4 rounded-3 text-center" style="font-size: 14px; border: 1px solid #fca5a5;">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> <span th:text="${errorMessage}"></span>
+        </div>
+        
+        <div th:if="${successMessage}" class="alert alert-success p-3 mb-4 rounded-3 text-center" style="font-size: 14px; border: 1px solid #86efac;">
+            <i class="fa-solid fa-circle-check me-2"></i> <span th:text="${successMessage}"></span>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 1: HOME                             -->
+        <!-- ======================================= -->
+        <div id="tab-home" class="dashboard-tab">
+            <!-- Health Score Card -->
+            <div class="card">
+                <div class="card-header-custom">
+                    <h3><i class="fa-solid fa-heart-pulse text-danger"></i> Health Status</h3>
+                    <span class="pulse-indicator"></span>
+                </div>
+                <div class="score">88/100</div>
+                <div class="progress">
+                    <div class="progress-bar-custom" style="width: 88%"></div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <h3 class="section-title">Quick Actions</h3>
+            <div class="row g-3">
+                <div class="col-6">
+                    <button class="card w-100 text-center border-0 p-3 h-100" onclick="switchTab('book')" style="background: rgba(2, 132, 199, 0.05);">
+                        <i class="fa-solid fa-calendar-plus text-primary fs-3 mb-2"></i>
+                        <div class="fw-semibold text-primary" style="font-size: 13px;">Book Appointment</div>
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="card w-100 text-center border-0 p-3 h-100" onclick="switchTab('prescriptions')" style="background: rgba(16, 185, 129, 0.05);">
+                        <i class="fa-solid fa-prescription-bottle-medical text-success fs-3 mb-2"></i>
+                        <div class="fw-semibold text-success" style="font-size: 13px;">My Prescriptions</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upcoming / Last Appointment Card -->
+            <h3 class="section-title">Latest Booking</h3>
+            <div class="card">
+                <div class="card-header-custom">
+                    <h3><i class="fa-solid fa-calendar-check text-primary"></i> Last Appointment</h3>
+                </div>
+                <div th:if="${#lists.isEmpty(appointments)}">
+                    <p class="text-muted mb-0" style="font-size: 14px;">No appointments scheduled yet.</p>
+                </div>
+                <div th:if="${!#lists.isEmpty(appointments)}" th:with="lastApp=${appointments[appointments.size()-1]}">
+                    <p class="fw-semibold mb-1" style="font-size: 15px;" th:text="${lastApp.doctor.fullname}">Dr. Sarah Jenkins</p>
+                    <div class="text-muted d-flex justify-content-between align-items-center" style="font-size: 13px;">
+                        <span th:text="${lastApp.bookingDate} + ' at ' + ${lastApp.timeSlot}">Tomorrow, 11:30 AM</span>
+                        <span th:class="'status-badge ' + ${lastApp.status == 'Pending' ? 'status-pending' : (lastApp.status == 'Approved' ? 'status-approved' : 'status-cancelled')}" th:text="${lastApp.status}">Pending</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 2: BOOK APPOINTMENT                 -->
+        <!-- ======================================= -->
+        <div id="tab-book" class="dashboard-tab" style="display: none;">
+            <div class="card">
+                <div class="card-header-custom">
+                    <h3><i class="fa-solid fa-calendar-plus text-primary"></i> Book Appointment</h3>
+                </div>
+                <form th:action="@{/patient/appointment/book}" method="POST">
+                    <div class="form-group">
+                        <label class="form-label" for="doctorId">Select Doctor / Specialist</label>
+                        <select class="form-select" id="doctorId" name="doctorId" required>
+                            <option th:each="doc : ${doctors}" th:value="${doc.id}" th:text="${doc.fullname} + ' (' + ${doc.address} + ')'">Dr. Jenkins (Cardiologist)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="bookingDate">Appointment Date</label>
+                        <input type="date" class="form-control" id="bookingDate" name="bookingDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="timeSlot">Time Slot</label>
+                        <select class="form-select" id="timeSlot" name="timeSlot" required>
+                            <option value="09:00 AM">09:00 AM</option>
+                            <option value="10:00 AM">10:00 AM</option>
+                            <option value="11:30 AM">11:30 AM</option>
+                            <option value="02:00 PM">02:00 PM</option>
+                            <option value="03:30 PM">03:30 PM</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="symptoms">Symptoms / Reason</label>
+                        <textarea class="form-control" id="symptoms" name="symptoms" rows="3" placeholder="Describe symptoms briefly..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn mt-2">Confirm Schedule</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 3: MY APPOINTMENTS                  -->
+        <!-- ======================================= -->
+        <div id="tab-appointments" class="dashboard-tab" style="display: none;">
+            <h3 class="section-title">Appointment Log</h3>
+            <div th:if="${#lists.isEmpty(appointments)}">
+                <div class="card text-center text-muted p-4">No schedule bookings found.</div>
+            </div>
+            <div th:each="app : ${appointments}" class="card mb-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="fw-bold mb-1" style="font-size: 15px;" th:text="${app.doctor.fullname}">Dr. Sarah Jenkins</h5>
+                        <p class="text-muted mb-0" style="font-size: 12px;" th:text="${app.bookingDate} + ' • ' + ${app.timeSlot}">10 Jun 2026, 11:30 AM</p>
+                    </div>
+                    <span th:class="'status-badge ' + ${app.status == 'Pending' ? 'status-pending' : (app.status == 'Approved' ? 'status-approved' : 'status-cancelled')}" th:text="${app.status}">Pending</span>
+                </div>
+                <div class="p-2 bg-light rounded-3" style="font-size: 13px;">
+                    <strong>Reason:</strong> <span th:text="${app.symptoms}">Symptoms description.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 4: PRESCRIPTIONS                    -->
+        <!-- ======================================= -->
+        <div id="tab-prescriptions" class="dashboard-tab" style="display: none;">
+            <h3 class="section-title">My Prescriptions</h3>
+            <div th:if="${#lists.isEmpty(prescriptions)}">
+                <div class="card text-center text-muted p-4">No active prescriptions issued.</div>
+            </div>
+            <div th:each="pres : ${prescriptions}" class="card mb-3" style="border-left: 4px solid #10b981;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-bold text-success mb-0" style="font-size: 15px;" th:text="${pres.medicineName}">Amoxicillin 500mg</h5>
+                    <span class="text-muted" style="font-size: 11px;" th:text="${pres.date}">2026-06-15</span>
+                </div>
+                <div style="font-size: 13px; line-height: 1.5;">
+                    <div class="mb-1"><strong>Dosage:</strong> <span th:text="${pres.dosage}">1 tablet twice daily</span></div>
+                    <div class="text-muted"><strong>Instructions:</strong> <span th:text="${pres.instructions}">Take after meals for 7 days</span></div>
+                    <div class="mt-2 text-end" style="font-size: 11px; font-style: italic;">
+                        Issued by <span th:text="${pres.doctor.fullname}">Dr. Sarah Jenkins</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 5: PROFILE                          -->
+        <!-- ======================================= -->
+        <div id="tab-profile" class="dashboard-tab" style="display: none;">
+            <div class="card text-center p-4">
+                <div style="font-size: 60px; color: var(--primary);"><i class="fa-solid fa-circle-user"></i></div>
+                <h4 class="fw-bold mt-2 mb-1" th:text="${patient.fullname}">John Doe</h4>
+                <p class="text-muted mb-0" th:text="'Patient Username: ' + ${patient.username}">Patient Account</p>
+                
+                <div class="details-grid text-start">
+                    <div class="details-item">
+                        <span>Gender</span>
+                        <strong th:text="${patient.gender}">Male</strong>
+                    </div>
+                    <div class="details-item">
+                        <span>Age</span>
+                        <strong th:text="${patient.age} + ' Years'">30</strong>
+                    </div>
+                    <div class="details-item" style="grid-column: span 2;">
+                        <span>Gmail Address</span>
+                        <strong th:text="${patient.gmail}">john.doe@gmail.com</strong>
+                    </div>
+                    <div class="details-item" style="grid-column: span 2;">
+                        <span>Phone Number</span>
+                        <strong th:text="${patient.phone}">+1 555-0199</strong>
+                    </div>
+                    <div class="details-item" style="grid-column: span 2;">
+                        <span>Home Address</span>
+                        <strong th:text="${patient.address}">123 Health Ave, Wellness City</strong>
+                    </div>
+                </div>
+                
+                <button class="btn btn-outline-primary rounded-pill mt-4 w-100" onclick="switchTab('edit')">
+                    <i class="fa-solid fa-user-gear me-2"></i> Update Account Profile
+                </button>
+            </div>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 6: EDIT PROFILE                     -->
+        <!-- ======================================= -->
+        <div id="tab-edit" class="dashboard-tab" style="display: none;">
+            <div class="card">
+                <div class="card-header-custom">
+                    <h3><i class="fa-solid fa-user-gear text-primary"></i> Edit Profile Info</h3>
+                </div>
+                <form th:action="@{/patient/profile/update}" method="POST">
+                    <div class="form-group">
+                        <label class="form-label" for="fullname">Full Name</label>
+                        <input type="text" class="form-control" id="edit-fullname" name="fullname" th:value="${patient.fullname}" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 form-group">
+                            <label class="form-label" for="age">Age</label>
+                            <input type="number" class="form-control" id="edit-age" name="age" th:value="${patient.age}" required min="1" max="120">
+                        </div>
+                        <div class="col-6 form-group">
+                            <label class="form-label" for="gender">Gender</label>
+                            <select class="form-select" id="edit-gender" name="gender" required>
+                                <option value="Male" th:selected="${patient.gender == 'Male'}">Male</option>
+                                <option value="Female" th:selected="${patient.gender == 'Female'}">Female</option>
+                                <option value="Other" th:selected="${patient.gender == 'Other'}">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="phone">Phone Number</label>
+                        <input type="tel" class="form-control" id="edit-phone" name="phone" th:value="${patient.phone}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="gmail">Gmail Address</label>
+                        <input type="email" class="form-control" id="edit-gmail" name="gmail" th:value="${patient.gmail}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="address">Home Address</label>
+                        <input type="text" class="form-control" id="edit-address" name="address" th:value="${patient.address}" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn mt-2">Save Profile Updates</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-link-custom active" id="nav-home" onclick="switchTab('home')">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-link-custom" id="nav-book" onclick="switchTab('book')">
+            <i class="fa-solid fa-calendar-plus"></i>
+            <span>Schedule</span>
+        </button>
+        <button class="nav-link-custom" id="nav-appointments" onclick="switchTab('appointments')">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Log</span>
+        </button>
+        <button class="nav-link-custom" id="nav-prescriptions" onclick="switchTab('prescriptions')">
+            <i class="fa-solid fa-prescription-bottle-medical"></i>
+            <span>Pharmacy</span>
+        </button>
+        <button class="nav-link-custom" id="nav-profile" onclick="switchTab('profile')">
+            <i class="fa-solid fa-circle-user"></i>
+            <span>Profile</span>
+        </button>
+    </nav>
+</div>
+
+<!-- Dynamic Model Tab Active Selector from Controller redirection flash attributes -->
+<input type="hidden" id="controllerActiveTab" th:value="${activeTab}">
+
+<script>
+    function switchTab(tabName) {
+        // Hide all tabs
+        const tabs = document.querySelectorAll('.dashboard-tab');
+        tabs.forEach(tab => tab.style.display = 'none');
+        
+        // Remove active class from nav links
+        const links = document.querySelectorAll('.nav-link-custom');
+        links.forEach(link => link.classList.remove('active'));
+        
+        // Show target tab
+        const targetTab = document.getElementById('tab-' + tabName);
+        if (targetTab) {
+            targetTab.style.display = 'block';
+        }
+        
+        // Mark link as active
+        const targetLink = document.getElementById('nav-' + tabName);
+        if (targetLink) {
+            targetLink.classList.add('active');
+        }
+        
+        // Handle edit/profile page special link focus
+        if (tabName === 'edit') {
+            document.getElementById('nav-profile').classList.add('active');
+        }
+    }
+
+    // On load, check if controller redirected to a specific tab
+    document.addEventListener('DOMContentLoaded', function() {
+        const val = document.getElementById('controllerActiveTab').value;
+        if (val && val !== '') {
+            switchTab(val);
+        }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

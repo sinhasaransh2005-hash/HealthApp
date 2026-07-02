@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+</head>
+<body>
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; margin-top: 100px; color: #475569;">
+        <h2 style="font-weight: 500;">Logging you in...</h2>
+        <p>Syncing your premium healthcare companion...</p>
+    </div>
+    
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const backendRole = /*[[${user.role}]]*/ 'ROLE_PATIENT';
+        const user = {
+            fullname: /*[[${user.fullname}]]*/ '',
+            username: /*[[${user.username}]]*/ '',
+            role: (backendRole === 'ROLE_DOCTOR' ? 'doctor' : 'patient'),
+            gender: /*[[${user.gender}]]*/ 'Male',
+            age: /*[[${user.age}]]*/ 30,
+            address: /*[[${user.address}]]*/ '',
+            gmail: /*[[${user.gmail}]]*/ '',
+            phone: /*[[${user.phone}]]*/ ''
+        };
+        sessionStorage.setItem('current_user', JSON.stringify(user));
+        window.location.href = '/interface.html';
+        /*]]>*/
+    </script>
+</body>
+</html>

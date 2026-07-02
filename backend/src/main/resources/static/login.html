@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthTrack - Login</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="shared.js"></script>
+</head>
+<body>
+
+<!-- Auth Flow Container (always visible initially on login page) -->
+<div class="auth-wrapper" id="auth-flow-container" style="display: flex;">
+    <!-- Portal Selection Screen -->
+    <div id="portal-selection-view">
+        <div class="auth-form-header" style="margin-top: 40px;">
+            <h2>HealthTrack</h2>
+            <p>Select a portal to continue</p>
+            <div id="already-logged-in-container" style="display: none; margin-top: 15px;">
+                <a href="interface.html" class="submit-btn" style="display: inline-block; text-decoration: none; width: auto; padding: 10px 20px; font-size: 14px; background: var(--primary-medium);">
+                    <i class="fa-solid fa-gauge"></i> Go to Dashboard
+                </a>
+            </div>
+        </div>
+        <div class="portal-container">
+            <div class="portal-card patient" id="select-patient-portal">
+                <div class="portal-icon">
+                    <i class="fa-solid fa-user-injured"></i>
+                </div>
+                <h3>Patient Portal</h3>
+                <p>Access your health metrics, appointments, pharmacy, and medical reports.</p>
+            </div>
+            <div class="portal-card doctor" id="select-doctor-portal">
+                <div class="portal-icon">
+                    <i class="fa-solid fa-user-md"></i>
+                </div>
+                <h3>Doctor Portal</h3>
+                <p>View upcoming patient appointments, clinical reports, and manage your schedule.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Form Screen -->
+    <div class="auth-form-card" id="login-view" style="display: none;">
+        <button class="auth-back-btn" id="login-back-btn"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <div class="auth-form-header">
+            <h2 id="login-title">Patient Login</h2>
+            <p>Welcome back! Enter your details below.</p>
+        </div>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="login-username"><i class="fa-solid fa-user"></i> Username</label>
+                <input type="text" id="login-username" required placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+                <input type="password" id="login-password" required placeholder="Enter password">
+            </div>
+            
+            <!-- Captcha (catch code) -->
+            <div class="form-group">
+                <label for="login-captcha-input"><i class="fa-solid fa-shield-halved"></i> Captcha Code</label>
+                <div class="captcha-container">
+                    <div class="captcha-box" id="captcha-display">------</div>
+                    <button type="button" class="captcha-refresh-btn" id="captcha-refresh" title="Refresh Captcha">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
+                <input type="text" id="login-captcha-input" required placeholder="Enter the code shown above">
+            </div>
+
+            <div class="auth-options">
+                <div></div>
+                <a href="#" class="forgot-password-link" id="forgot-password-btn">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="submit-btn" id="login-submit-btn">Login</button>
+        </form>
+        <div class="auth-toggle">
+            Don't have an account? <a href="#" id="go-to-signup">Sign Up</a>
+        </div>
+    </div>
+
+    <!-- Signup Form Screen -->
+    <div class="auth-form-card" id="signup-view" style="display: none;">
+        <button class="auth-back-btn" id="signup-back-btn"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <div class="auth-form-header">
+            <h2 id="signup-title">Patient Sign Up</h2>
+            <p>Create a premium companion account.</p>
+        </div>
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="signup-fullname"><i class="fa-solid fa-signature"></i> Full Name</label>
+                <input type="text" id="signup-fullname" required placeholder="John Doe">
+            </div>
+            
+            <div class="form-group-row">
+                <div class="form-group">
+                    <label for="signup-username"><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="signup-username" required placeholder="johndoe">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="signup-password" required placeholder="••••••••">
+                </div>
+            </div>
+
+            <div class="form-group-row">
+                <div class="form-group">
+                    <label for="signup-gender"><i class="fa-solid fa-venus-mars"></i> Gender</label>
+                    <select id="signup-gender" required style="width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: var(--font-body); font-size: 15px; outline: none; background: var(--bg-surface); color: var(--text-main);">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="signup-age"><i class="fa-solid fa-birthday-cake"></i> Age</label>
+                    <input type="number" id="signup-age" min="1" max="120" required placeholder="30">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="signup-gmail"><i class="fa-solid fa-envelope"></i> Gmail Address</label>
+                <input type="email" id="signup-gmail" required placeholder="johndoe@gmail.com">
+            </div>
+
+            <div class="form-group">
+                <label for="signup-phone"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                <input type="tel" id="signup-phone" required placeholder="+1 555-0199">
+            </div>
+
+            <div class="form-group">
+                <label for="signup-address"><i class="fa-solid fa-house-chimney"></i> Address</label>
+                <input type="text" id="signup-address" required placeholder="123 Health Ave, Wellness City">
+            </div>
+
+            <button type="submit" class="submit-btn">Create Account</button>
+        </form>
+        <div class="auth-toggle">
+            Already have an account? <a href="#" id="go-to-login">Login</a>
+        </div>
+    </div>
+</div>
+
+<!-- Forgot Password Dialog -->
+<div class="forgot-password-modal" id="forgot-password-modal">
+    <div class="modal-content" style="max-width: 400px; padding: 24px; position: relative;">
+        <div class="modal-header">
+            <h3>Retrieve Password</h3>
+            <button class="close-btn" id="close-forgot-modal">&times;</button>
+        </div>
+        <form id="forgot-password-form">
+            <div class="form-group">
+                <label for="forgot-username"><i class="fa-solid fa-user"></i> Username</label>
+                <input type="text" id="forgot-username" required placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="forgot-gmail"><i class="fa-solid fa-envelope"></i> Gmail Address</label>
+                <input type="email" id="forgot-gmail" required placeholder="Enter registered Gmail">
+            </div>
+            <button type="submit" class="submit-btn" style="margin-top: 12px;">Recover Password</button>
+        </form>
+        <div id="recovery-result" style="display: none; margin-top: 16px; padding: 12px; border-radius: var(--radius-sm); font-size: 14px; text-align: center; line-height: 1.5;"></div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if already authenticated
+    const user = getCurrentUser();
+    if (user) {
+        const loggedInContainer = document.getElementById('already-logged-in-container');
+        if (loggedInContainer) {
+            loggedInContainer.style.display = 'block';
+        }
+    }
+
+    // DOM selectors - Auth Flow Elements
+    const portalSelectionView = document.getElementById('portal-selection-view');
+    const loginView = document.getElementById('login-view');
+    const signupView = document.getElementById('signup-view');
+
+    // Portal selectors
+    const selectPatientPortal = document.getElementById('select-patient-portal');
+    const selectDoctorPortal = document.getElementById('select-doctor-portal');
+
+    // Login selectors
+    const loginForm = document.getElementById('login-form');
+    const loginTitle = document.getElementById('login-title');
+    const loginUsername = document.getElementById('login-username');
+    const loginPassword = document.getElementById('login-password');
+    const loginCaptchaInput = document.getElementById('login-captcha-input');
+    const captchaDisplay = document.getElementById('captcha-display');
+    const captchaRefresh = document.getElementById('captcha-refresh');
+    const forgotPasswordBtn = document.getElementById('forgot-password-btn');
+    const loginBackBtn = document.getElementById('login-back-btn');
+
+    // Signup selectors
+    const signupForm = document.getElementById('signup-form');
+    const signupTitle = document.getElementById('signup-title');
+    const signupFullname = document.getElementById('signup-fullname');
+    const signupUsername = document.getElementById('signup-username');
+    const signupPassword = document.getElementById('signup-password');
+    const signupGender = document.getElementById('signup-gender');
+    const signupAge = document.getElementById('signup-age');
+    const signupGmail = document.getElementById('signup-gmail');
+    const signupPhone = document.getElementById('signup-phone');
+    const signupAddress = document.getElementById('signup-address');
+    const signupBackBtn = document.getElementById('signup-back-btn');
+
+    // View toggle buttons
+    const goToSignup = document.getElementById('go-to-signup');
+    const goToLogin = document.getElementById('go-to-login');
+
+    // Forgot password selectors
+    const forgotPasswordModal = document.getElementById('forgot-password-modal');
+    const closeForgotModal = document.getElementById('close-forgot-modal');
+    const forgotPasswordForm = document.getElementById('forgot-password-form');
+    const forgotUsernameInput = document.getElementById('forgot-username');
+    const forgotGmailInput = document.getElementById('forgot-gmail');
+    const recoveryResult = document.getElementById('recovery-result');
+
+    let currentPortalRole = 'patient'; // 'patient' or 'doctor'
+    let currentCaptcha = '';
+
+    // Generate Captcha (catch code)
+    function generateCaptcha() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+        let code = '';
+        for (let i = 0; i < 6; i++) {
+            code += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        currentCaptcha = code;
+        captchaDisplay.innerText = currentCaptcha;
+    }
+
+    // Switch view helper functions
+    function showPortalSelection() {
+        portalSelectionView.style.display = 'block';
+        loginView.style.display = 'none';
+        signupView.style.display = 'none';
+    }
+
+    function showLogin(role) {
+        currentPortalRole = role;
+        loginTitle.innerText = role === 'patient' ? 'Patient Login' : 'Doctor Login';
+        
+        // Reset and show captcha
+        loginForm.reset();
+        generateCaptcha();
+        
+        portalSelectionView.style.display = 'none';
+        loginView.style.display = 'block';
+        signupView.style.display = 'none';
+    }
+
+    // Portal Click Listeners
+    selectPatientPortal.addEventListener('click', () => showLogin('patient'));
+    selectDoctorPortal.addEventListener('click', () => showLogin('doctor'));
+
+    // Back buttons
+    loginBackBtn.addEventListener('click', showPortalSelection);
+
+    // Captcha Refresh
+    captchaRefresh.addEventListener('click', generateCaptcha);
+
+    // Forgot Password Modal trigger
+    forgotPasswordBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        forgotPasswordForm.reset();
+        recoveryResult.style.display = 'none';
+        forgotPasswordModal.classList.add('active');
+    });
+
+    closeForgotModal.addEventListener('click', () => {
+        forgotPasswordModal.classList.remove('active');
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === forgotPasswordModal) {
+            forgotPasswordModal.classList.remove('active');
+        }
+    });
+
+    // Forgot Password Submit
+    forgotPasswordForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const usernameVal = forgotUsernameInput.value.trim().toLowerCase();
+        const gmailVal = forgotGmailInput.value.trim().toLowerCase();
+        const users = getRegisteredUsers();
+
+        const match = users.find(u => u.username.toLowerCase() === usernameVal && u.gmail.toLowerCase() === gmailVal);
+        if (match) {
+            recoveryResult.className = 'status-approved';
+            recoveryResult.style.background = '#e6fffa';
+            recoveryResult.style.color = '#0d9488';
+            recoveryResult.style.border = '1px solid #14b8a6';
+            recoveryResult.innerHTML = `<strong>Account Verified!</strong><br>Your password is: <code style="font-size:15px; font-weight:bold; background:#fff; padding:2px 6px; border:1px solid #ddd; border-radius:4px;">${match.password}</code>`;
+        } else {
+            recoveryResult.className = 'status-cancelled';
+            recoveryResult.style.background = '#fff5f5';
+            recoveryResult.style.color = '#e53e3e';
+            recoveryResult.style.border = '1px solid #ef4444';
+            recoveryResult.innerHTML = `<strong>Error:</strong><br>No matching account found with that username and Gmail.`;
+        }
+        recoveryResult.style.display = 'block';
+    });
+
+    // Handle Login Submit
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const usernameVal = loginUsername.value.trim();
+        const passwordVal = loginPassword.value.trim();
+        const captchaVal = loginCaptchaInput.value.trim();
+
+        // 1. Verify Captcha code
+        if (captchaVal.toLowerCase() !== currentCaptcha.toLowerCase()) {
+            alert('❌ Invalid Captcha Code! Please try again.');
+            generateCaptcha();
+            loginCaptchaInput.value = '';
+            loginCaptchaInput.focus();
+            return;
+        }
+
+        // 2. Authenticate against registered users
+        const users = getRegisteredUsers();
+        const foundUser = users.find(u => u.username.toLowerCase() === usernameVal.toLowerCase());
+
+        if (foundUser && foundUser.password === passwordVal) {
+            if (foundUser.role !== currentPortalRole) {
+                alert(`❌ Access Denied: This account is not registered as a ${currentPortalRole}.`);
+                return;
+            }
+            // Success - Set user and redirect
+            setCurrentUser(foundUser, currentPortalRole);
+            window.location.href = 'interface.html';
+        } else {
+            alert('❌ Invalid username or password!');
+            generateCaptcha();
+            loginCaptchaInput.value = '';
+        }
+    });
+
+    // Initialize display
+    showPortalSelection();
+});
+</script>
+
+</body>
+</html>

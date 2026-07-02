@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - HealthTrack</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f46e5; /* Indigo */
+            --primary-dark: #3730a3;
+            --primary-light: #818cf8;
+            --primary-glow: rgba(129, 140, 248, 0.15);
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 480px;
+            background: #f8fafc;
+            min-height: 100vh;
+            box-shadow: 0 0 40px rgba(15, 23, 42, 0.08);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 90px; /* space for nav */
+        }
+
+        .container {
+            padding: 24px;
+        }
+
+        header {
+            margin-bottom: 24px;
+        }
+
+        .header-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.06);
+        }
+
+        .card-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-header-custom h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header-custom h3 i {
+            color: var(--primary);
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 24px 0 16px 0;
+            color: var(--text-main);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            height: 76px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.05);
+        }
+
+        .nav-link-custom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            gap: 4px;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 8px;
+        }
+
+        .nav-link-custom i {
+            font-size: 20px;
+            transition: var(--transition);
+        }
+
+        .nav-link-custom.active, .nav-link-custom:hover {
+            color: var(--primary);
+        }
+
+        .nav-link-custom.active i {
+            transform: translateY(-2px);
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            font-size: 14px;
+            background: #fafbfd;
+        }
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+            background: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 15px;
+        }
+
+        .details-item {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        .details-item span {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .details-item strong {
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        /* Stats Grid */
+        .doctor-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .doctor-stat-card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 16px 8px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.01);
+            border: 1px solid var(--border-color);
+        }
+
+        .doctor-stat-card h4 {
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .doctor-stat-card p {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0;
+        }
+
+        .log-item {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .log-patient-name {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        .log-patient-info {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .log-date-badge {
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .log-details {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .action-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn-sm {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .action-btn-sm.approve { background: #10b981; color: white; }
+        .action-btn-sm.approve:hover { background: #059669; }
+        .action-btn-sm.cancel { background: #ef4444; color: white; }
+        .action-btn-sm.cancel:hover { background: #dc2626; }
+
+        /* Statuses */
+        .status-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-approved { background: #d1fae5; color: #059669; }
+        .status-cancelled { background: #fee2e2; color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <div class="container">
+        
+        <!-- Header -->
+        <header>
+            <div class="header-main">
+                <div>
+                    <h2 id="greeting-title" th:text="'Welcome, ' + ${doctor.fullname}">Welcome, Dr. Jenkins</h2>
+                    <p>Doctor Portal • HealthTrack Companion</p>
+                </div>
+                <!-- Form Logout in Header -->
+                <form th:action="@{/logout}" method="POST" id="logout-form-header">
+                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <!-- Alert Banners -->
+        <div th:if="${errorMessage}" class="alert alert-danger p-3 mb-4 rounded-3 text-center" style="font-size: 14px; border: 1px solid #fca5a5;">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> <span th:text="${errorMessage}"></span>
+        </div>
+        
+        <div th:if="${successMessage}" class="alert alert-success p-3 mb-4 rounded-3 text-center" style="font-size: 14px; border: 1px solid #86efac;">
+            <i class="fa-solid fa-circle-check me-2"></i> <span th:text="${successMessage}"></span>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 1: HOME                             -->
+        <!-- ======================================= -->
+        <div id="tab-home" class="dashboard-tab">
+            <!-- Doctor stats -->
+            <div class="doctor-stats">
+                <div class="doctor-stat-card">
+                    <h4>Total</h4>
+                    <p th:text="${#lists.size(appointments)}">0</p>
+                </div>
+                <div class="doctor-stat-card">
+                    <h4>Approved</h4>
+                    <p th:text="${#lists.size(appointments.?[status == 'Approved'])}" style="color: #10b981;">0</p>
+                </div>
+                <div class="doctor-stat-card">
+                    <h4>Pending</h4>
+                    <p th:text="${#lists.size(appointments.?[status == 'Pending'])}" style="color: #d97706;">0</p>
+                </div>
+            </div>
+
+            <!-- Doctor Profile Summary -->
+            <div class="card">
+                <div class="card-header-custom">
+                    <h3><i class="fa-solid fa-user-md"></i> Clinician Profile</h3>
+                </div>
+                <div class="details-grid mt-2">
+                    <div class="details-item" style="grid-column: span 2;">
+                        <span>Name</span>
+                        <strong th:text="${doctor.fullname}">Dr. Sarah Jenkins</strong>
+                    </div>
+                    <div class="details-item">
+                        <span>Username</span>
+                        <strong th:text="${doctor.username}">doctor_sarah</strong>
+                    </div>
+                    <div class="details-item">
+                        <span>Clinic Suite</span>
+                        <strong th:text="${doctor.address}">Suite 400</strong>
+                    </div>
+                    <div class="details-item" style="grid-column: span 2;">
+                        <span>Gmail Address</span>
+                        <strong th:text="${doctor.gmail}">sarah@gmail.com</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctor Actions -->
+            <h3 class="section-title">Quick Actions</h3>
+            <div class="row g-3">
+                <div class="col-6">
+                    <button class="card w-100 text-center border-0 p-3 h-100" onclick="switchTab('prescriptions')" style="background: rgba(99, 102, 241, 0.05);">
+                        <i class="fa-solid fa-file-prescription text-primary fs-3 mb-2"></i>
+                        <div class="fw-semibold text-primary" style="font-size: 13px;">Write Prescription</div>
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="card w-100 text-center border-0 p-3 h-100" onclick="switchTab('requests')" style="background: rgba(245, 158, 11, 0.05);">
+                        <i class="fa-solid fa-calendar-check text-warning fs-3 mb-2"></i>
+                        <div class="fw-semibold text-warning" style="font-size: 13px;">Appointment Requests</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 2: PATIENT LIST                     -->
+        <!-- ======================================= -->
+        <div id="tab-patients" class="dashboard-tab" style="display: none;">
+            <h3 class="section-title">Registered Patients</h3>
+            <div th:if="${#lists.isEmpty(patients)}">
+                <div class="card text-center text-muted p-4">No patients registered in database.</div>
+            </div>
+            <div th:each="pat : ${patients}" class="card mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="font-size: 40px; color: var(--primary);"><i class="fa-solid fa-circle-user"></i></div>
+                    <div>
+                        <h5 class="fw-bold mb-1" style="font-size: 15px;" th:text="${pat.fullname}">John Doe</h5>
+                        <p class="text-muted mb-0" style="font-size: 12px;" th:text="${pat.gender} + ' • ' + ${pat.age} + ' Years'">Male • 30 Years</p>
+                    </div>
+                </div>
+                <div class="details-grid mt-3" style="grid-template-columns: 1fr;">
+                    <div class="details-item" style="border: none; padding: 6px 0; background: none;">
+                        <span>Gmail</span>
+                        <strong th:text="${pat.gmail}">john@gmail.com</strong>
+                    </div>
+                    <div class="details-item" style="border: none; padding: 6px 0; background: none;">
+                        <span>Phone</span>
+                        <strong th:text="${pat.phone}">+123456</strong>
+                    </div>
+                    <div class="details-item" style="border: none; padding: 6px 0; background: none;">
+                        <span>Address</span>
+                        <strong th:text="${pat.address}">123 Wellness St</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 3: APPOINTMENT REQUESTS             -->
+        <!-- ======================================= -->
+        <div id="tab-requests" class="dashboard-tab" style="display: none;">
+            <h3 class="section-title">Schedule Requests</h3>
+            <div th:if="${#lists.isEmpty(appointments)}">
+                <div class="card text-center text-muted p-4">No patient bookings found.</div>
+            </div>
+            <div th:each="app : ${appointments}" class="card mb-3">
+                <div class="log-item-header">
+                    <div>
+                        <div class="log-patient-name" th:text="${app.patient.fullname}">John Doe</div>
+                        <div class="log-patient-info" th:text="'Age: ' + ${app.patient.age} + ' • ' + ${app.patient.gender}">Age: 30 • Male</div>
+                    </div>
+                    <span class="log-date-badge" th:text="${app.bookingDate} + ' (' + ${app.timeSlot} + ')'">Date / Time</span>
+                </div>
+                <div class="log-details" th:text="'Symptoms: ' + ${app.symptoms}">
+                    Symptoms/Reason details.
+                </div>
+                
+                <!-- Status controls -->
+                <div th:if="${app.status == 'Pending'}" class="action-container mt-2">
+                    <form th:action="@{/doctor/appointment/approve}" method="POST" style="flex: 1;">
+                        <input type="hidden" name="appointmentId" th:value="${app.id}">
+                        <button type="submit" class="action-btn-sm approve w-100"><i class="fa-solid fa-check"></i> Approve</button>
+                    </form>
+                    <form th:action="@{/doctor/appointment/cancel}" method="POST" style="flex: 1;">
+                        <input type="hidden" name="appointmentId" th:value="${app.id}">
+                        <button type="submit" class="action-btn-sm cancel w-100"><i class="fa-solid fa-times"></i> Cancel</button>
+                    </form>
+                </div>
+                <div th:if="${app.status != 'Pending'}" class="text-end mt-2">
+                    <span th:class="'status-badge ' + ${app.status == 'Approved' ? 'status-approved' : 'status-cancelled'}" th:text="${app.status}">Approved</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 4: TODAY'S APPOINTMENTS             -->
+        <!-- ======================================= -->
+        <div id="tab-today" class="dashboard-tab" style="display: none;">
+            <h3 class="section-title">Today's Agenda</h3>
+            <div th:if="${#lists.isEmpty(todayAppointments)}">
+                <div class="card text-center text-muted p-4">No appointments scheduled for today.</div>
+            </div>
+            <div th:each="app : ${todayAppointments}" class="card mb-3" style="border-left: 4px solid var(--primary);">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-bold mb-0" style="font-size: 15px;" th:text="${app.patient.fullname}">John Doe</h5>
+                    <span class="badge bg-indigo text-dark" style="background:#e0e7ff;" th:text="${app.timeSlot}">11:30 AM</span>
+                </div>
+                <div style="font-size: 13px;">
+                    <strong>Reason:</strong> <span th:text="${app.symptoms}">Symptoms details.</span>
+                    <div class="mt-2 d-flex justify-content-between align-items-center">
+                        <span class="text-muted" style="font-size: 11px;">Patient ID: #HT-<span th:text="${app.patient.id}">1</span></span>
+                        <span th:class="'status-badge ' + ${app.status == 'Pending' ? 'status-pending' : (app.status == 'Approved' ? 'status-approved' : 'status-cancelled')}" th:text="${app.status}">Approved</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================= -->
+        <!-- TAB 5: PRESCRIPTIONS                    -->
+        <!-- ======================================= -->
+        <div id="tab-prescriptions" class="dashboard-tab" style="display: none;">
+            <div class="card">
+                <div class="card-header-custom">
+                    <h3><i class="fa-solid fa-file-prescription text-indigo"></i> Issue Prescription</h3>
+                </div>
+                <form th:action="@{/doctor/prescription/create}" method="POST">
+                    <div class="form-group">
+                        <label class="form-label" for="patientId">Select Patient</label>
+                        <select class="form-select" id="patientId" name="patientId" required>
+                            <option th:each="pat : ${patients}" th:value="${pat.id}" th:text="${pat.fullname} + ' (Age: ' + ${pat.age} + ')'">John Doe</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="medicineName">Medicine Name & Strength</label>
+                        <input type="text" class="form-control" id="medicineName" name="medicineName" required placeholder="e.g. Paracetamol 500mg">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="dosage">Dosage Frequency</label>
+                        <input type="text" class="form-control" id="dosage" name="dosage" required placeholder="e.g. 1 tablet twice daily">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="instructions">Instructions</label>
+                        <textarea class="form-control" id="instructions" name="instructions" rows="3" required placeholder="e.g. Take after food for 5 days. Avoid alcohol."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn mt-2">Issue Prescription</button>
+                </form>
+            </div>
+            
+            <h3 class="section-title">Prescription Log</h3>
+            <div th:if="${#lists.isEmpty(prescriptions)}">
+                <div class="card text-center text-muted p-4">No active prescriptions logged.</div>
+            </div>
+            <div th:each="pres : ${prescriptions}" class="card mb-3" style="border-left: 4px solid #10b981;">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h5 class="fw-bold text-success mb-0" style="font-size: 15px;" th:text="${pres.medicineName}">Amoxicillin</h5>
+                    <span class="text-muted" style="font-size: 11px;" th:text="${pres.date}">2026-06-15</span>
+                </div>
+                <p class="text-muted mb-1" style="font-size: 12px;">Patient: <strong th:text="${pres.patient.fullname}">John Doe</strong></p>
+                <div style="font-size: 13px;">
+                    <div><strong>Dosage:</strong> <span th:text="${pres.dosage}">1 tablet once daily</span></div>
+                    <div class="text-muted"><strong>Instructions:</strong> <span th:text="${pres.instructions}">instructions details</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-link-custom active" id="nav-home" onclick="switchTab('home')">
+            <i class="fa-solid fa-house-user"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-link-custom" id="nav-patients" onclick="switchTab('patients')">
+            <i class="fa-solid fa-hospital-user"></i>
+            <span>Patients</span>
+        </button>
+        <button class="nav-link-custom" id="nav-requests" onclick="switchTab('requests')">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Requests</span>
+        </button>
+        <button class="nav-link-custom" id="nav-today" onclick="switchTab('today')">
+            <i class="fa-solid fa-calendar-day"></i>
+            <span>Agenda</span>
+        </button>
+        <button class="nav-link-custom" id="nav-prescriptions" onclick="switchTab('prescriptions')">
+            <i class="fa-solid fa-file-prescription"></i>
+            <span>Pharmacy</span>
+        </button>
+    </nav>
+</div>
+
+<!-- Dynamic Model Tab Active Selector from Controller redirection flash attributes -->
+<input type="hidden" id="controllerActiveTab" th:value="${activeTab}">
+
+<script>
+    function switchTab(tabName) {
+        // Hide all tabs
+        const tabs = document.querySelectorAll('.dashboard-tab');
+        tabs.forEach(tab => tab.style.display = 'none');
+        
+        // Remove active class from nav links
+        const links = document.querySelectorAll('.nav-link-custom');
+        links.forEach(link => link.classList.remove('active'));
+        
+        // Show target tab
+        const targetTab = document.getElementById('tab-' + tabName);
+        if (targetTab) {
+            targetTab.style.display = 'block';
+        }
+        
+        // Mark link as active
+        const targetLink = document.getElementById('nav-' + tabName);
+        if (targetLink) {
+            targetLink.classList.add('active');
+        }
+    }
+
+    // On load, check if controller redirected to a specific tab
+    document.addEventListener('DOMContentLoaded', function() {
+        const val = document.getElementById('controllerActiveTab').value;
+        if (val && val !== '') {
+            switchTab(val);
+        }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

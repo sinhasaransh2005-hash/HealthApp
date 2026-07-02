@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - HealthTrack</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --primary-light: #38bdf8;
+            --primary-glow: rgba(56, 189, 248, 0.15);
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            max-width: 440px;
+            width: 100%;
+            padding: 24px;
+        }
+
+        .login-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 36px 30px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 28px;
+            background: none;
+            border-bottom: none;
+            padding: 0;
+        }
+
+        .card-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 10px;
+        }
+
+        .card-header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            font-size: 14px;
+            color: #334155;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-control {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            font-size: 15px;
+            background: #fafbfd;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: white;
+        }
+
+        .captcha-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .captcha-image-box {
+            flex: 1;
+            height: 48px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .captcha-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .captcha-refresh-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .captcha-refresh-btn:hover {
+            background: #e2e8f0;
+            color: var(--primary);
+            transform: rotate(180deg);
+        }
+
+        .auth-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: -4px;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+
+        .auth-options a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .auth-options a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .auth-toggle a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-card">
+        <a th:href="@{/}" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Portals</a>
+        
+        <div class="card-header" style="margin-top: 15px;">
+            <div style="font-size: 32px; color: var(--primary);"><i class="fa-solid fa-heart-pulse"></i></div>
+            <h2 th:text="${role == 'doctor' ? 'Doctor Login' : 'Patient Login'}">Patient Login</h2>
+            <p>Welcome back! Please enter your credentials.</p>
+        </div>
+
+        <!-- Alert Banners -->
+        <div th:if="${errorMessage}" class="alert alert-danger p-3 mb-4 rounded-3 text-center" style="font-size: 14px; border: 1px solid #fca5a5;">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> <span th:text="${errorMessage}"></span>
+        </div>
+        
+        <div th:if="${successMessage}" class="alert alert-success p-3 mb-4 rounded-3 text-center" style="font-size: 14px; border: 1px solid #86efac;">
+            <i class="fa-solid fa-circle-check me-2"></i> <span th:text="${successMessage}"></span>
+        </div>
+
+        <form th:action="@{/login}" method="POST" id="login-form">
+            <!-- Hidden role param to keep context -->
+            <input type="hidden" name="role" th:value="${role}">
+
+            <div class="form-group">
+                <label class="form-label" for="username"><i class="fa-solid fa-user"></i> Username</label>
+                <input type="text" class="form-control" id="username" name="username" required placeholder="Enter username">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password"><i class="fa-solid fa-lock"></i> Password</label>
+                <input type="password" class="form-control" id="password" name="password" required placeholder="Enter password">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="captcha"><i class="fa-solid fa-shield-halved"></i> Captcha Verification</label>
+                <div class="captcha-container">
+                    <div class="captcha-image-box">
+                        <img th:src="@{/captcha}" id="captcha-img" alt="Captcha Image">
+                    </div>
+                    <button type="button" class="captcha-refresh-btn" id="captcha-refresh-btn" title="Refresh Captcha">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
+                <input type="text" class="form-control mt-2" id="captcha" name="captcha" required placeholder="Enter code shown above">
+            </div>
+
+            <div class="auth-options">
+                <div></div>
+                <a th:href="@{/forgot-password}">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="submit-btn">Login</button>
+        </form>
+
+        <div class="auth-toggle">
+            Don't have an account? <a th:href="@{/register(role=${role})}">Sign Up</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('captcha-refresh-btn').addEventListener('click', function() {
+        var captchaImg = document.getElementById('captcha-img');
+        // Append a random timestamp parameter to force browser reload image
+        captchaImg.src = '/captcha?t=' + new Date().getTime();
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
